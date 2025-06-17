@@ -4,7 +4,7 @@ const Annotation = require('../models/Annotation');
 const SocialBias = require('../models/SocialBias');
 
 
-const genAI = new GoogleGenerativeAI('AIzaSyCx45E9gGX1ZkxyuqDw14jInkW9IsdMqrE');
+const genAI = new GoogleGenerativeAI('GEMINI_API_KEY');
 
 exports.analyzeGeneralBias = async (req, res) => {
   try {
