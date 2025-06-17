@@ -2,9 +2,9 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const GenderBias = require('../models/GenderBias');
 const Annotation = require('../models/Annotation');
 const SocialBias = require('../models/SocialBias');
-require('dotenv').config();
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+const genAI = new GoogleGenerativeAI('AIzaSyCx45E9gGX1ZkxyuqDw14jInkW9IsdMqrE');
 
 exports.analyzeGeneralBias = async (req, res) => {
   try {
@@ -28,11 +28,11 @@ exports.analyzeGeneralBias = async (req, res) => {
 
     let formattedExamples = '';
     if (genderBiasExamples.length > 0) {
-      formattedExamples = '\n\nHere are some examples of gender-biased sentences from a dataset:\n';
+      formattedExamples = `\n\nHere are some examples of gender-biased sentences from a dataset:\n`;
       genderBiasExamples.forEach((example, index) => {
         formattedExamples += `\nExample ${index + 1}:\nOriginal Text: "${example.text}"\nBias Type: ${example.biasType}\n`;
       });
-      formattedExamples += '\nGiven these examples, analyze the following text for gender bias and rewrite it to be inclusive.';
+      formattedExamples += `\nGiven these examples, analyze the following text for gender bias and rewrite it to be inclusive.`;
     }
 
     const prompt = `Analyze the following text for potential bias and suggest an inclusive rewrite. Focus on gender bias. ${formattedExamples}\n\nText: "${text}"\n\n**Please provide:**
@@ -68,6 +68,30 @@ exports.getPoliticalLeaningDistribution = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch political leaning distribution data' });
   }
 };
+const pdfParse = require('pdf-parse');
+
+exports.analyzeDocumentFromPDF = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const pdfData = await pdfParse(req.file.buffer);
+    const extractedText = pdfData.text;
+
+    if (!extractedText || extractedText.trim().length < 10) {
+      return res.status(400).json({ error: 'Could not extract usable text from PDF' });
+    }
+
+    // Now reuse your `analyzeDocument` logic with extractedText instead of req.body.documentText
+    req.body.documentText = extractedText;
+    return exports.analyzeDocument(req, res); // delegate to existing function
+  } catch (error) {
+    console.error('Error extracting text from PDF:', error);
+    res.status(500).json({ error: 'Failed to process PDF' });
+  }
+};
+
 
 exports.analyzeDocument = async (req, res) => {
   try {
@@ -77,7 +101,7 @@ exports.analyzeDocument = async (req, res) => {
       return res.status(400).json({ error: 'No document text provided' });
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     let genderBiasExamples = [];
     try {
@@ -110,21 +134,21 @@ exports.analyzeDocument = async (req, res) => {
 
     let formattedExamples = '';
     if (genderBiasExamples.length > 0) {
-      formattedExamples += '\n\nHere are some examples of gender-biased sentences from a dataset:\n';
+      formattedExamples += `\n\nHere are some examples of gender-biased sentences from a dataset:\n`;
       genderBiasExamples.forEach((example, index) => {
         formattedExamples += `\nExample ${index + 1}:\nOriginal Text: "${example.text}"\nBias Type: ${example.biasType}\n`;
       });
     }
 
     if (socialBiasExamples.length > 0) {
-      formattedExamples += '\n\nHere are some examples of social biases:\n';
+      formattedExamples += `\n\nHere are some examples of social biases:\n`;
       socialBiasExamples.forEach((example, index) => {
         formattedExamples += `\nExample ${index + 1}:\nOriginal Text: "${example.text}"\nBias Type: ${example.biasType}\n`;
       });
     }
 
     if (annotationExamples.length > 0) {
-      formattedExamples += '\n\nHere are some examples of general text and their annotations:\n';
+      formattedExamples += `\n\nHere are some examples of general text and their annotations:\n`;
       annotationExamples.forEach((example, index) => {
         formattedExamples += `\nExample ${index + 1}:\nText: "${example.text}"\nAnnotation: ${example.annotation}\n`;
       });
@@ -146,3 +170,4 @@ exports.analyzeDocument = async (req, res) => {
     res.status(500).json({ error: 'Failed to analyze document' });
   }
 };
+

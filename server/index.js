@@ -10,19 +10,23 @@ dotenv.config();
 const generalRoutes = require('./routes/general');
 const mediaRoutes = require('./routes/media');
 const dashboardRoutes = require('./routes/dashboard');
+const documentRoutes = require('./routes/document');
+
 
 // Create Express app
 const app = express();
 
 // Middleware
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
 // Routes
 app.use('/analyze-general', generalRoutes);
 app.use('/analyze-media', mediaRoutes);
 app.use('/dashboard', dashboardRoutes);
-app.use('/api', generalRoutes);
+app.use('/api/analyze-document', documentRoutes);
+
+
 
 // Health check endpoint
 app.get('/health', (req, res) => {
