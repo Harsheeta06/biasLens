@@ -1,107 +1,126 @@
-##BiasLens
+# BiasLens
 
-BiasLens is an AI-powered web app that detects and explains different forms of language bias—such as gender bias, media bias, and social bias—in text. It highlights the type of bias, provides explanations, suggests inclusive rewrites, and displays confidence scores.
+**BiasLens** is an AI-powered web app that detects and explains different forms of language bias—such as **gender bias**, **media bias**, and **social bias**—in text. It highlights the type of bias, provides explanations, suggests inclusive rewrites, and displays confidence scores.
 
-Features
+---
 
-Detects multiple types of bias (gender, media, social)
-Provides structured AI-generated analysis
-Parses AI responses into clearly formatted sections
-Suggests inclusive rewrites for biased statements
-Displays confidence scores with visual feedback
-Supports Markdown formatting via react-markdown and remark-gfm
-Includes a Bias Education tab to help users understand bias types
-Tech Stack
+##  Features
 
-Frontend
+- Detects multiple types of bias (gender, media, social)
+- Provides structured AI-generated analysis
+- Parses AI responses into clearly formatted sections
+- Suggests inclusive rewrites for biased statements
+- Displays confidence scores 
 
-React
-Material UI (MUI)
-React Router
-React Markdown (react-markdown + remark-gfm)
-Backend (Expected)
+---
 
-Node.js + Express
-AI API (Gemini / OpenAI)
-MongoDB / Firestore for storage (optional)
-Hosted on Cloud Run or Firebase Functions
-Getting Started
+##  Tech Stack
 
-Clone and Setup
+### Frontend
+
+- React
+- Material UI (MUI)
+- React Router DOM
+- `react-markdown` + `remark-gfm`
+
+### Backend (Expected/Optional)
+
+- Node.js + Express
+- AI APIs (Gemini or OpenAI)
+- MongoDB Atlas or Firebase Firestore
+- Hosted on Google Cloud Run or Firebase Functions
+
+---
+##  Getting Started
+
+### 1. Clone the Repository
+
+```bash
 git clone https://github.com/yourusername/biaslens.git
 cd biaslens
 npm install
-Environment Variable
-Create a .env file:
+```
 
+### 2. Set Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
 REACT_APP_API_URL=http://localhost:8080
-This URL should point to the backend endpoint where the AI service is hosted.
+```
 
-Project Structure
+This should point to your local or deployed backend.
 
+---
+
+## 📁 Project Structure
+
+```
 src/
 ├── components/
-│   ├── AnalysisForm.js          // Form UI for input
-│   ├── AnalysisResults.js       // Handles parsed display
+│   ├── AnalysisForm.js           # Text input and submit UI
+│   ├── AnalysisResults.js        # Formatted result rendering
 ├── pages/
-│   ├── AnalyzePage.js           // Route-based pages
-│   ├── DocumentUploadPage.js    // Optional upload flow
+│   ├── AnalyzePage.js            # Main route for live analysis
+│   ├── DocumentUploadPage.js     # (Optional) Upload-based entry point
 ├── utils/
-│   └── parseAnalysis.js         // Parsing logic (inline in AnalysisResults for now)
-Expected Backend API Design
+│   └── parseAnalysis.js          # AI response parsing logic (can be moved out of AnalysisResults.js)
+```
 
-Endpoint: /analyze-general
-For detecting gender or social bias.
+---
 
-Endpoint: /analyze-media
-For detecting media bias (including political leaning, framing, omission, selection bias).
+##  API Endpoints (Expected)
 
-Example Request
-POST /analyze-media
-{
-  "text": "biden not educating ??"
-}
-Example Response
-{
-  "originalText": "biden not educating ??",
-  "analysis": "1. **Political Leaning:** Right-leaning.\n\n2. **Types of Bias Detected:** Framing, Omission, Selection.\n\n3. **Explanation of the Bias:**\n\n* **Framing:** The question mark implies doubt...\n\n4. **Suggested Neutral Rewrite:**\n\n* Option 1: \"Debate Continues on Biden's Education Policies\"\n\n5. **Confidence Score:** 95",
-  "timestamp": "2025-06-17T23:58:38.245Z"
-}
-AI Response Parsing Logic
+### POST `/analyze-general`
 
-In AnalysisResults.js, the AI's response is parsed using a custom function parseAnalysis() that:
+Detects **gender** or **social bias** in freeform text.
 
-Splits the AI’s markdown response by newlines
-Looks for section headers such as:
-1. Political Leaning:
-2. Types of Bias Detected:
-3. Explanation of the Bias:
-4. Suggested Neutral Rewrite:
-5. Confidence Score:
-Each section is parsed and saved in state
-Explanation bullets like * Framing: are parsed line by line and separated with styling
-If no number is detected in the confidence score, a default tag such as appropriate or unsure is used.
+### POST `/analyze-media`
 
-Key Components
+Detects **media bias**: framing, omission, selection, and political leaning.
 
-AnalysisForm.js: Handles text input and trigger
-AnalysisResults.js: Formats AI analysis
-Uses react-markdown as fallback
-Displays parsed sections via MUI Chips and Typography
-parseAnalysis(): Located within AnalysisResults.js. You can modularize it to utils/parseAnalysis.js if needed
-Customization
+---
 
-You can easily:
+## 🧩 Key Components
 
-Add more bias categories (e.g., political, racial)
-Extend explanation parsing for heatmaps or sentiment
-Replace chips with visual tags (e.g., word clouds)
-Deployment
+| File                  | Purpose                                      |
+|-----------------------|----------------------------------------------|
+| `AnalysisForm.js`     | Form UI that sends requests to the backend   |
+| `AnalysisResults.js`  | Parses and displays the analysis             |
+| `parseAnalysis()`     | Logic to convert AI markdown to UI-friendly JSON |
 
-This app can be deployed on any static site hosting platform:
+---
 
-Firebase Hosting
+## 🛠 Customization Ideas
+
+- Add more detailed bias types (racial, political, algorithmic)
+- Display bias heatmaps for each sentence
+- Enable PDF export or shareable links
+- Hook into Google Sheets or Airtable for review queues
+
+---
+
+## 📦 Deployment
+
+This is a frontend app that i have deployed on firebase hosting with backend deployed on cloud run. Utilized firestore and MongoDB. 
+
+### Firebase Hosting
+
+```bash
 npm run build
 firebase deploy
-Vercel
-vercel deploy
+```
+---
+
+## 📅 Future Roadmap
+
+- Chrome Extension: Bias detection in real-time while browsing
+- Document upload (PDF, DOCX) with full-body bias detection
+- Visual insights (charts, heatmaps, word clouds)
+- User accounts and saved analysis dashboard
+
+---
+
+## License
+
+This project is licensed under the MIT License.
