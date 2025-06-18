@@ -2,6 +2,8 @@
 
 **BiasLens** is an AI-powered web app that detects and explains different forms of language bias—such as **gender bias**, **media bias**, and **social bias**—in text. It highlights the type of bias, provides explanations, suggests inclusive rewrites, and displays confidence scores.
 
+This proect was built as part of the Google AI in action hackathon
+
 ---
 
 ##  Features
